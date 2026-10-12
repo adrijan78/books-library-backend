@@ -8,5 +8,7 @@ import java.util.List;
 public interface BookService {
 
     Page<Book> getAllBooks(int pageNo,int pageSize);
+    Page<Book> findByTitleContaining(String title, int pageNo, int pageSize);
+    Page<Book> findByCategory(String category, int pageNo, int pageSize);
 
 }
