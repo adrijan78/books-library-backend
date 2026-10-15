@@ -42,6 +42,12 @@ public class BookController {
         return bookService.findByCategory(category, pageNo, pageSize);
     }
 
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping("/{id}")
+    public Book getBookById(@PathVariable Long id) {
+        return bookService.getBookById(id);
+    }
+
 
 
 }
