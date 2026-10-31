@@ -2,11 +2,14 @@ package com.adrijanProjects.springBootLibrary.service;
 
 import com.adrijanProjects.springBootLibrary.entity.Review;
 import com.adrijanProjects.springBootLibrary.repository.ReviewRepository;
+import com.adrijanProjects.springBootLibrary.requestmodel.ReviewRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Date;
 
 @Service
 public class ReviewServiceImpl implements ReviewService{
@@ -24,5 +27,30 @@ public class ReviewServiceImpl implements ReviewService{
         Pageable pageable = PageRequest.of(pageNo,pageSize);
 
         return reviewRepository.findByBookId(bookId,pageable);
+    }
+
+    @Override
+    public Review createReview(String userEmail, ReviewRequest reviewRequest) throws Exception {
+        if(reviewRepository.existsByUserEmailAndBookId(userEmail, reviewRequest.getBookId())) {
+            throw new Exception("Review already exists for this user");
+        }
+
+        Review review = new Review();
+
+        review.setUserEmail(userEmail);
+        review.setBookId(reviewRequest.getBookId());
+        review.setRating(reviewRequest.getRating());
+        review.setReviewDescription(reviewRequest.getReviewDescription());
+        review.setDate(new Date());
+
+        return reviewRepository.save(review);
+
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public double getAverageRating(Long bookId) {
+        Double average =  reviewRepository.findAverageRatingByBookId(bookId);
+        return average != null ? average : 0;
     }
 }
